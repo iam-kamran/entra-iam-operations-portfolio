@@ -48,7 +48,7 @@ The candidate user's returned direct group membership output included:
 | `IAMLAB-Finance` | Present |
 | `IAMLAB-AllEmployees` | Present |
 
-These observations apply only to the provisional candidate. They do not establish the affected user's membership or Payroll/Finance portal access.
+These observations apply only to the provisional candidate. They do not establish the affected user's membership or access to `IAMLAB-Finance-Portal`.
 
 ## 5. Investigation checklist
 
@@ -74,10 +74,11 @@ Use Microsoft Entra sign-in logs to discover the affected user:
 1. Open **Entra ID → Monitoring & health → Sign-in logs**.
 2. Filter **Application** to `IAMLAB-Finance-Portal`.
 3. Filter **Status** to **Failure**.
-4. Use the date range relevant to the reported attempt.
-5. Inspect the event's user, application, status, failure reason/error code, Conditional Access result, timestamp, and correlation ID.
+4. Start with **Interactive user sign-ins**.
+5. Use the date range relevant to the reported attempt.
+6. Inspect the event's user, application, status, failure reason/error code, Conditional Access result, timestamp, and correlation ID.
 
-Start with interactive user sign-ins. If no relevant event appears, validate the date range and consider whether the attempt may be present in another sign-in log type. Do not assume there was a sign-in event until one is found.
+If no relevant event appears, validate the date range and sign-in type before widening the search. Consider whether the attempt may be present in another sign-in log type. Do not assume there was a sign-in event until one is found.
 
 ## 7. Commands executed
 
