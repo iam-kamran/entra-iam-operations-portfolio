@@ -7,7 +7,8 @@
 | Scenario | Finance user cannot access `IAMLAB-Finance-Portal` |
 | Environment | Non-production Entra ID lab |
 | Date investigation started | 2026-11-05 |
-| Status | In progress |
+| Status | In progress — foundational investigation |
+| Learning approach | Start with Entra application and access basics; configure SSO later |
 | Business impact | Finance employee unable to access the Finance portal |
 
 ## 2. Reported issue
@@ -24,6 +25,8 @@ The user shared a screenshot showing these application names:
 - `IAMLAB-HR-Portal`
 
 The investigation is scoped to `IAMLAB-Finance-Portal`. The screenshot alone does not establish the corresponding service principal details or prove that a sign-in attempt occurred.
+
+The investigator opened the Single sign-on section for `IAMLAB-Finance-Portal` and confirmed that no SSO method is currently configured. Therefore, interactive application sign-in testing and sign-in-log troubleshooting are deferred until the SSO configuration stage. This is a current lab configuration observation, not yet a confirmed root cause for the reported access issue.
 
 Relevant group names observed during the candidate-user check:
 
@@ -67,18 +70,26 @@ These observations apply only to the provisional candidate. They do not establis
 | Policy | Did Conditional Access or another authentication control affect the attempt? | Pending |
 | Provisioning | Are provisioning errors relevant to the symptom? | Pending |
 
-## 6. Next investigation action
+## 6. Investigation progression
 
-Use Microsoft Entra sign-in logs to discover the affected user:
+The exercise will proceed from basic Entra application and access configuration to SSO and authentication troubleshooting. No new Python application or unrelated application registration is required for this ticket.
 
-1. Open **Entra ID → Monitoring & health → Sign-in logs**.
-2. Filter **Application** to `IAMLAB-Finance-Portal`.
-3. Filter **Status** to **Failure**.
-4. Start with **Interactive user sign-ins**.
-5. Use the date range relevant to the reported attempt.
-6. Inspect the event's user, application, status, failure reason/error code, Conditional Access result, timestamp, and correlation ID.
+| Stage | Area | Status |
+|---|---|---|
+| 1 | Enterprise application basics and properties | Current |
+| 2 | Application assignment requirements | Pending |
+| 3 | User and group assignments | Pending |
+| 4 | User attributes and group membership | Pending |
+| 5 | App roles and authorization | Pending |
+| 6 | Configure SSO for `IAMLAB-Finance-Portal` | Pending |
+| 7 | Test sign-in and inspect sign-in logs | Deferred until SSO is configured |
+| 8 | Troubleshoot and validate access | Pending |
 
-If no relevant event appears, validate the date range and sign-in type before widening the search. Consider whether the attempt may be present in another sign-in log type. Do not assume there was a sign-in event until one is found.
+### Current next action — Stage 1
+
+Open the **Overview** and **Properties** pages for the existing `IAMLAB-Finance-Portal` enterprise application. Record the application name and the basic sign-in / assignment-related properties visible there. Do not change any settings yet.
+
+After the application and access basics are understood, proceed to assignments. Sign-in log discovery will be revisited after SSO is configured and a test sign-in can be generated.
 
 ## 7. Commands executed
 
@@ -96,6 +107,7 @@ Record only commands actually run.
 - The ticket did not provide a user identifier.
 - The lab application names shown are `IAMLAB-Finance-Portal` and `IAMLAB-HR-Portal`.
 - `IAMLAB-Finance-Portal` is the application in scope based on the Finance issue.
+- The investigator confirmed that no SSO method is currently configured for `IAMLAB-Finance-Portal`.
 - A provisional Finance user was selected for an initial membership check, but that user is not linked to a failed sign-in event.
 
 ### Assumptions / hypotheses
@@ -106,6 +118,7 @@ No root-cause hypothesis is confirmed.
 
 - The affected user has not yet been identified.
 - No relevant sign-in event has been inspected.
+- Interactive sign-in testing is deferred because SSO is not configured yet.
 - The application screenshot does not by itself establish the sign-in event or service principal details.
 
 ## 9. Root cause
