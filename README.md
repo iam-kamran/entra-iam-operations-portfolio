@@ -19,21 +19,21 @@ This repository documents practical IAM troubleshooting: how an issue is assesse
 
 | ID | Scenario | Status |
 |---|---|---|
-| 001 | Finance employee cannot access the Payroll application | Planned |
+| 001 | Finance user cannot access `IAMLAB-Finance-Portal` | In progress |
 
 Each investigation will be added as its own folder under [Investigations](./Investigations/).
 
 ## Investigation approach
 
 1. Understand the reported issue and business impact.
-2. Confirm the identity and relevant account attributes.
-3. Examine group membership and group configuration.
-4. Inspect the enterprise application and its assignments.
-5. Review relevant authentication, sign-in, provisioning, and policy evidence.
-6. Separate verified facts from assumptions.
-7. State the root cause only when supported by evidence.
-8. Recommend an appropriately authorized remediation.
-9. Validate the outcome and document remaining limitations.
+2. Identify the affected user from sign-in or other relevant evidence; do not guess the identity.
+3. Confirm the identity and relevant account attributes.
+4. Examine group membership and group configuration.
+5. Inspect the enterprise application and its assignments.
+6. Review relevant authentication, sign-in, provisioning, and policy evidence.
+7. Separate verified facts from assumptions.
+8. State the root cause only when supported by evidence.
+9. Recommend an appropriately authorized remediation and validate the outcome.
 
 The checklist is a guide, not a command sequence. The investigation should follow the evidence available in each scenario.
 
@@ -43,7 +43,7 @@ The checklist is a guide, not a command sequence. The investigation should follo
 .
 ├── README.md
 ├── Investigations/
-│   └── 001-finance-user-cannot-access-payroll/
+│   └── 001-finance-user-cannot-access-iamlab-finance-portal/
 │       ├── README.md
 │       ├── investigation.md
 │       └── evidence/
