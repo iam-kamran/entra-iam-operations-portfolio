@@ -63,7 +63,7 @@ These observations apply only to the provisional candidate. They do not establis
 | Attributes | Are Department and other relevant attributes correct? | Pending |
 | Membership | Which relevant groups contain the identified user? | Pending |
 | Group configuration | Are group type, assignment, and any dynamic rule understood? | Pending |
-| Application | Is the correct enterprise application/service principal identified? | Pending |
+| Application | Is the correct enterprise application/service principal identified using Graph PowerShell? | Pending |
 | Assignment | Is the user or a relevant group assigned? | Pending |
 | App role | Is the expected application role assigned? | Pending |
 | Authentication | What do the sign-in details show? | Pending |
@@ -72,7 +72,7 @@ These observations apply only to the provisional candidate. They do not establis
 
 ## 6. Investigation progression
 
-The exercise will proceed from basic Entra application and access configuration to SSO and authentication troubleshooting. No new Python application or unrelated application registration is required for this ticket.
+The entire investigation will be performed through Microsoft Graph PowerShell. The Entra admin center portal will not be used as an investigation tool. The exercise will proceed from basic Entra application and access configuration to SSO and authentication troubleshooting. No new Python application or unrelated application registration is required for this ticket.
 
 | Stage | Area | Status |
 |---|---|---|
@@ -85,11 +85,11 @@ The exercise will proceed from basic Entra application and access configuration 
 | 7 | Test sign-in and inspect sign-in logs | Deferred until SSO is configured |
 | 8 | Troubleshoot and validate access | Pending |
 
-### Current next action — Stage 1
+### Current next action — Stage 1 (Graph PowerShell only)
 
-Open the **Overview** and **Properties** pages for the existing `IAMLAB-Finance-Portal` enterprise application. Record the application name and the basic sign-in / assignment-related properties visible there. Do not change any settings yet.
+Use Microsoft Graph PowerShell to retrieve the existing service principal for the exact display name `IAMLAB-Finance-Portal`. Use a server-side filter so only the matching application object is returned. Inspect its basic identity, enabled state, assignment requirement, and SSO-related properties. Do not change any settings yet.
 
-After the application and access basics are understood, proceed to assignments. Sign-in log discovery will be revisited after SSO is configured and a test sign-in can be generated.
+After the service principal is identified and its properties are understood, proceed to assignment requirements. Sign-in log discovery will be revisited after SSO is configured and a test sign-in can be generated.
 
 ## 7. Commands executed
 
