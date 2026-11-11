@@ -34,7 +34,7 @@ No context output was included in the submitted evidence. The connected account,
 
 The investigator ran a user query with `-All`, then used `Where-Object` to filter UPNs containing the IAMLAB prefix.
 
-The investigator identified the practice identity. The actual UPN and object ID are intentionally omitted from this public record. Although `AccountEnabled` was included in the selected properties, the resulting user row was not included in the submitted evidence; account-enabled status is therefore not confirmed here.
+The investigator identified the practice identity. The actual UPN and object ID are intentionally omitted from this public record. The submitted output returned 12 IAMLAB-prefixed user records; all 12 displayed `AccountEnabled = True`. David's returned row showed `AccountEnabled = True`. His account is therefore confirmed enabled in the lab.
 
 **Efficiency note:** `-All` retrieves all pages before the local `Where-Object` filter is applied. For a large tenant, prefer a supported server-side Graph `-Filter` or retrieve a known user directly by UPN. Do not download the full directory to find one known identity.
 
@@ -74,14 +74,14 @@ The all-zero AppRoleId is the default app-role identifier used for a default acc
 
 ### Confirmed from submitted output
 
-1. The designated practice identity was queried using `Get-MgUser`; the returned user row was not included in the evidence supplied for this record.
+1. The designated practice identity was returned by `Get-MgUser`; the submitted result showed `AccountEnabled = True`.
 2. The practice user is a direct member of `IAMLAB-Finance` and `IAMLAB-AllEmployees`.
 3. The user app-role-assignment query returned an assignment for `IAMLAB-Finance-Portal`.
 4. The assignment's `PrincipalId` matches the `IAMLAB-Finance` group object ID from the membership result. The evidence therefore points to a group-based assignment.
 
 ### Not yet established
 
-- The user's `AccountEnabled` value, because the corresponding output row was not shared.
+- The Graph authentication context and granted scopes, because `Get-MgContext` output was not shared.
 - The connected tenant and granted Graph scopes, because `Get-MgContext` output was not shared.
 - Whether the enterprise application is enabled.
 - Whether assignment is required by the enterprise application.
