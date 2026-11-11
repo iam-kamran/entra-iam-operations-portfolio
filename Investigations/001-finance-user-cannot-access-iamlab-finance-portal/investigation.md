@@ -28,7 +28,15 @@ A Graph connection was established before the investigation. The connection comm
 
 ### Command 2 — `Get-MgContext`
 
-No context output was included in the submitted evidence. The connected account, tenant, authentication type, and granted scopes therefore remain unverified in this record.
+The investigator returned the active context's \`.Scopes\` collection, sorted alphabetically. The reported scopes included:
+
+- Read scopes: \`User.Read\`, \`User.Read.All\`, \`Group.Read.All\`, \`Application.Read.All\`, \`Directory.Read.All\`, and \`AuditLog.Read.All\`.
+- Write-capable / highly privileged delegated scopes: \`User.ReadWrite.All\` and \`Directory.AccessAsUser.All\`.
+- Sign-in identity scopes: \`openid\`, \`profile\`, and \`email\`.
+
+**Security finding:** The active context reports write-capable permissions that are not required for the read-only investigation in Ticket 001. Microsoft describes \`Directory.AccessAsUser.All\` as a highly privileged delegated permission that grants access to nearly all Microsoft Entra API operations. \`User.ReadWrite.All\` permits reading and updating user profiles. No write operations were performed as part of this ticket. Future read-only exercises should use a least-privilege scope set.
+
+The submitted output contained only \`.Scopes\`; it did not include the account, tenant ID, authentication type, or client ID. Those context details remain unverified in this record.
 
 ### Command 3 — `Get-MgUser`
 
