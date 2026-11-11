@@ -28,7 +28,7 @@ The HR application is included as a comparison object only when relevant. Do not
 
 | Ticket | Focus | Commands | Count |
 |---|---|---|---:|
-| 001 | User identity, direct membership, and direct app assignment | 1–5 | 5 |
+| 001 | User identity, direct group membership, and user-associated app-role assignments | 1–5 | 5 |
 | 002 | Group configuration, members, and group app-role assignment | 6–8 | 3 |
 | 003 | Enterprise application, assignments, and app registration | 9–11 | 3 |
 | 004 | Sign-in, audit, licensing, and ownership review | 12–15 | 4 |
@@ -38,7 +38,7 @@ Tickets 001–004 collectively cover all 15 commands once. Ticket 005 repeats th
 
 ---
 
-# Ticket 001 — Finance user identity and direct access review
+# Ticket 001 — Finance user identity and application-role assignment review
 
 **Priority:** Medium  
 **Category:** Identity and access investigation  
@@ -48,13 +48,13 @@ Tickets 001–004 collectively cover all 15 commands once. Ticket 005 repeats th
 
 ## Reported issue
 
-Application Support reports that the Finance user is unable to access the Finance Portal. The support team asks IAM to verify the user's identity record and determine what direct group membership and direct application-role assignments are present.
+Application Support reports that the Finance user is unable to access the Finance Portal. The support team asks IAM to verify the user's identity record, direct group memberships, and application-role assignments returned for the user.
 
 No root cause is known.
 
 ## Your assignment
 
-Investigate the user's Graph authentication context, confirm the identity and account attributes, inspect the user's direct group memberships, and determine whether the user has any direct application-role assignments.
+Investigate the user's Graph authentication context, confirm the identity and account attributes, inspect the user's direct group memberships, and review the app-role assignments returned for the user. Distinguish assignments whose principal is the user from assignments whose principal is one of the user's direct groups.
 
 ## Assigned commands
 
@@ -66,7 +66,7 @@ Investigate the user's Graph authentication context, confirm the identity and ac
 
 ## Expected deliverable
 
-Document the verified identity facts, direct memberships, direct application-role assignments, and any gaps or limitations. Do not assume that direct assignment results include access inherited through groups.
+Document the verified identity facts, direct memberships, user-associated app-role assignments, and any gaps or limitations. Use `PrincipalId` and `PrincipalType` to identify whether each assignment is granted to the user or to a directly joined group.
 
 ---
 
