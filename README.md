@@ -23,6 +23,12 @@ This repository documents practical IAM troubleshooting: how an issue is assesse
 
 Each investigation will be added as its own folder under [Investigations](./Investigations/).
 
+## Five-ticket Graph PowerShell practice track
+
+Build Microsoft Graph PowerShell investigation skills through five progressive support tickets. The first four tickets introduce the 15 reference commands in focused groups; the fifth is an end-to-end capstone using all 15.
+
+[Open the five-ticket practice track](./Training-Tickets/FIVE-TICKET-GRAPH-POWERSHELL-PRACTICE-TRACK.md).
+
 ## Investigation approach
 
 1. Understand the reported issue and business impact.
