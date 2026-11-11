@@ -1,142 +1,107 @@
-# Investigation 001 — Finance user cannot access IAMLAB-Finance-Portal
+# Investigation 001 — Finance user identity and application-role assignment review
 
 ## 1. Ticket information
 
 | Field | Value |
 |---|---|
-| Scenario | Finance user cannot access `IAMLAB-Finance-Portal` |
+| Scenario | Finance user identity and application-role assignment review |
 | Environment | Non-production Entra ID lab |
-| Date investigation started | 2026-11-05 |
-| Status | In progress — foundational investigation |
-| Learning approach | Start with Entra application and access basics; configure SSO later |
-| Business impact | Finance employee unable to access the Finance portal |
+| Practice identity | `IAMLAB-David Brown` |
+| Department | Finance |
+| Target application | `IAMLAB-Finance-Portal` |
+| Command scope | Commands 1–5 from the 15-command reference |
+| Status | Initial evidence reviewed; RCA not yet established |
+
+This five-ticket practice track explicitly designates `IAMLAB-David Brown` as the practice identity. This is a lab exercise designation; it is not evidence of a real production incident or an independently discovered failed sign-in event.
 
 ## 2. Reported issue
 
-A Finance employee reports being unable to access `IAMLAB-Finance-Portal`.
+The practice ticket states that the Finance user cannot access `IAMLAB-Finance-Portal`. Application Support asks IAM to verify the identity, account status, group memberships, and application-role assignments associated with the user.
 
-The ticket did not provide a user identifier, sign-in timestamp, or error message. The affected identity must be discovered from sign-in evidence rather than selected by assumption.
+No technical root cause is supplied.
 
-## 3. Lab objects observed
+## 3. Commands executed and evidence
 
-The user shared a screenshot showing these application names:
+### Command 1 — `Connect-MgGraph`
 
-- `IAMLAB-Finance-Portal`
-- `IAMLAB-HR-Portal`
+A Graph connection was established before the investigation. The connection command and output were not included in the submitted evidence.
 
-The investigation is scoped to `IAMLAB-Finance-Portal`. The screenshot alone does not establish the corresponding service principal details or prove that a sign-in attempt occurred.
+### Command 2 — `Get-MgContext`
 
-The investigator opened the Single sign-on section for `IAMLAB-Finance-Portal` and confirmed that no SSO method is currently configured. Therefore, interactive application sign-in testing and sign-in-log troubleshooting are deferred until the SSO configuration stage. This is a current lab configuration observation, not yet a confirmed root cause for the reported access issue.
+No context output was included in the submitted evidence. The connected account, tenant, authentication type, and granted scopes therefore remain unverified in this record.
 
-Relevant group names observed during the candidate-user check:
+### Command 3 — `Get-MgUser`
 
-- `IAMLAB-Finance`
-- `IAMLAB-AllEmployees`
+The investigator ran a user query with `-All`, then used `Where-Object` to filter UPNs containing the IAMLAB prefix.
 
-## 4. Initial candidate check — not confirmed as affected user
+The investigator identified the practice identity. The actual UPN and object ID are intentionally omitted from this public record. Although `AccountEnabled` was included in the selected properties, the resulting user row was not included in the submitted evidence; account-enabled status is therefore not confirmed here.
 
-The investigator queried users whose UPN began with `IAM` and whose Department attribute began with `Fi`. A Finance user was selected as a candidate to test group membership.
+**Efficiency note:** `-All` retrieves all pages before the local `Where-Object` filter is applied. For a large tenant, prefer a supported server-side Graph `-Filter` or retrieve a known user directly by UPN. Do not download the full directory to find one known identity.
 
-The investigator later clarified that this user was not identified by the ticket or by a sign-in event. Therefore:
+### Command 4 — `Get-MgUserMemberOfAsGroup`
 
-- The candidate is **not confirmed** as the affected user.
-- The candidate's group memberships must not be treated as evidence explaining the reported incident.
-- The candidate's actual UPN and object ID are intentionally omitted from this public record.
+The returned direct group memberships were:
 
-The candidate user's returned direct group membership output included:
-
-| Group | Observed membership |
+| Group | Observed result |
 |---|---|
 | `IPL-Foreign-Players` | Present |
 | `IAMLAB-Finance` | Present |
 | `IAMLAB-AllEmployees` | Present |
 
-These observations apply only to the provisional candidate. They do not establish the affected user's membership or access to `IAMLAB-Finance-Portal`.
+The group object IDs were reviewed during the exercise but are omitted from this public record.
 
-## 5. Investigation checklist
+**Finding:** The practice user is a direct member of `IAMLAB-Finance` and `IAMLAB-AllEmployees`.
 
-| Area | Investigation question | Result / evidence |
-|---|---|---|
-| Sign-in discovery | Which Finance user attempted to access `IAMLAB-Finance-Portal`? | Pending |
-| Sign-in result | Did the attempt fail, succeed, or get interrupted? | Pending |
-| Identity | Is the event's user object the correct identity and is the account enabled? | Pending |
-| Attributes | Are Department and other relevant attributes correct? | Pending |
-| Membership | Which relevant groups contain the identified user? | Pending |
-| Group configuration | Are group type, assignment, and any dynamic rule understood? | Pending |
-| Application | Is the correct enterprise application/service principal identified using Graph PowerShell? | Pending |
-| Assignment | Is the user or a relevant group assigned? | Pending |
-| App role | Is the expected application role assigned? | Pending |
-| Authentication | What do the sign-in details show? | Pending |
-| Policy | Did Conditional Access or another authentication control affect the attempt? | Pending |
-| Provisioning | Are provisioning errors relevant to the symptom? | Pending |
+### Command 5 — `Get-MgUserAppRoleAssignment`
 
-## 6. Investigation progression
+The submitted output contained one row with the following sanitized evidence:
 
-The entire investigation will be performed through Microsoft Graph PowerShell. The Entra admin center portal will not be used as an investigation tool. The exercise will proceed from basic Entra application and access configuration to SSO and authentication troubleshooting. No new Python application or unrelated application registration is required for this ticket.
+| Property | Observed value |
+|---|---|
+| ResourceDisplayName | `IAMLAB-Finance-Portal` |
+| AppRoleId | `00000000-0000-0000-0000-000000000000` |
+| PrincipalId | Matches the object ID returned for `IAMLAB-Finance` in Command 4 |
 
-| Stage | Area | Status |
-|---|---|---|
-| 1 | Enterprise application basics and properties | Current |
-| 2 | Application assignment requirements | Pending |
-| 3 | User and group assignments | Pending |
-| 4 | User attributes and group membership | Pending |
-| 5 | App roles and authorization | Pending |
-| 6 | Configure SSO for `IAMLAB-Finance-Portal` | Pending |
-| 7 | Test sign-in and inspect sign-in logs | Deferred until SSO is configured |
-| 8 | Troubleshoot and validate access | Pending |
+The returned `PrincipalId` matches the Finance group object ID from the membership result, rather than the practice user's object ID.
 
-### Current next action — Stage 1 (Graph PowerShell only)
+**Interpretation:** The output demonstrates an app-role assignment to `IAMLAB-Finance` for `IAMLAB-Finance-Portal`. This is a group-based assignment associated with the practice user's direct group membership; it is not evidence of an individually assigned app role to the user.
 
-Use Microsoft Graph PowerShell to retrieve the existing service principal for the exact display name `IAMLAB-Finance-Portal`. Use a server-side filter so only the matching application object is returned. Inspect its basic identity, enabled state, assignment requirement, and SSO-related properties. Do not change any settings yet.
+Microsoft Graph's user app-role-assignment endpoint returns assignments granted to the user and to groups of which the user is a direct member. See [Microsoft Learn — List appRoleAssignments granted to a user](https://learn.microsoft.com/en-us/graph/api/user-list-approleassignments?view=graph-rest-1.0).
 
-After the service principal is identified and its properties are understood, proceed to assignment requirements. Sign-in log discovery will be revisited after SSO is configured and a test sign-in can be generated.
+The all-zero AppRoleId is the default app-role identifier used for a default access assignment when no specific application role is selected. The target service principal's role definitions have not yet been examined in this ticket.
 
-## 7. Commands executed
+## 4. Findings
 
-Record only commands actually run.
+### Confirmed from submitted output
 
-| Command | Purpose | Relevant output / observation |
-|---|---|---|
-| Candidate-user query using `Get-MgUser` with local PowerShell filters | Find lab users whose UPN begins with `IAM` and Department begins with `Fi` | Returned candidate Finance user(s); did not identify the affected user |
-| `Get-MgUserMemberOfAsGroup` for provisional candidate | Inspect direct group membership | Returned `IPL-Foreign-Players`, `IAMLAB-Finance`, and `IAMLAB-AllEmployees`; candidate is not confirmed as the affected user |
+1. The designated practice identity was queried using `Get-MgUser`; the returned user row was not included in the evidence supplied for this record.
+2. The practice user is a direct member of `IAMLAB-Finance` and `IAMLAB-AllEmployees`.
+3. The user app-role-assignment query returned an assignment for `IAMLAB-Finance-Portal`.
+4. The assignment's `PrincipalId` matches the `IAMLAB-Finance` group object ID from the membership result. The evidence therefore points to a group-based assignment.
 
-## 8. Findings
+### Not yet established
 
-### Confirmed facts
+- The user's `AccountEnabled` value, because the corresponding output row was not shared.
+- The connected tenant and granted Graph scopes, because `Get-MgContext` output was not shared.
+- Whether the enterprise application is enabled.
+- Whether assignment is required by the enterprise application.
+- Whether the app-role model and SSO configuration support a successful application sign-in.
+- Whether the application successfully authenticates or authorizes the user.
 
-- The ticket did not provide a user identifier.
-- The lab application names shown are `IAMLAB-Finance-Portal` and `IAMLAB-HR-Portal`.
-- `IAMLAB-Finance-Portal` is the application in scope based on the Finance issue.
-- The investigator confirmed that no SSO method is currently configured for `IAMLAB-Finance-Portal`.
-- A provisional Finance user was selected for an initial membership check, but that user is not linked to a failed sign-in event.
+## 5. Preliminary assessment — not a root cause
 
-### Assumptions / hypotheses
+The submitted evidence does **not** support missing direct membership in `IAMLAB-Finance`, and it does **not** support a missing Finance-group assignment to `IAMLAB-Finance-Portal`. A group-based app-role assignment is present in the returned data.
 
-No root-cause hypothesis is confirmed.
+This does not prove that the user can successfully authenticate to or use the application. Ticket 001 is limited to commands 1–5; further investigation is allocated to subsequent tickets.
 
-### Investigation limitations
+## 6. Root cause
 
-- The affected user has not yet been identified.
-- No relevant sign-in event has been inspected.
-- Interactive sign-in testing is deferred because SSO is not configured yet.
-- The application screenshot does not by itself establish the sign-in event or service principal details.
+Not determined. The current evidence identifies a group-based application assignment but does not establish why the reported access issue occurs.
 
-## 9. Root cause
+## 7. Remediation
 
-Not determined.
+No change recommended at this stage. Continue with read-only investigation in the subsequent tickets. Any write operation requires explicit authorization.
 
-## 10. Remediation
+## 8. Evidence and public-sharing review
 
-Not determined. Any write operation requires explicit authorization and a documented change plan.
-
-## 11. Validation
-
-Not performed.
-
-## 12. Lessons learned
-
-To be completed after the investigation.
-
-## 13. Public evidence review
-
-Before publication, sanitize all outputs and confirm that no credentials, personal information, real tenant identifiers, or confidential configuration are included.
+Actual UPNs, user and group object IDs, tenant identifiers, and other sensitive values have been omitted from this public record. Only the lab's synthetic object names and the findings necessary to explain the investigation are retained.
